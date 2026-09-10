@@ -41,6 +41,14 @@ git remote add origin https://github.com/<owner>/<repo>.git
 git push -u origin main
 ```
 
+如果仓库已存在并且已经配置远程地址，后续版本更新可以直接执行：
+
+```powershell
+git add .
+git commit -m "feat: 增强子代理协作策略"
+git push
+```
+
 ## 作为 Codex 插件市场安装
 
 仓库克隆到本地后，将仓库中的插件市场文件添加为 Codex 插件市场源：

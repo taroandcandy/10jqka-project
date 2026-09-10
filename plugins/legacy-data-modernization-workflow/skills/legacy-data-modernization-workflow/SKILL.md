@@ -15,13 +15,45 @@ metadata:
 
 默认节点顺序：
 
-1. 使用 `repo-entrypoint-mapper` 梳理入口。
-2. 使用 `consumer-contract-mapper` 梳理输出消费者。
-3. 使用 `legacy-behavior-characterizer` 刻画旧行为。
-4. 使用 `dirty-data-case-designer` 设计脏数据样例。
-5. 使用 `refactor-slicer` 拆分功能扩展和重构计划。
-6. 使用 `compatibility-reviewer` 审查兼容性风险。
-7. 使用 `gray-release-planner` 规划灰度发布和回滚。
+1. 视任务规模先使用 `subagent-delegation-planner` 判断是否启用子代理。
+2. 使用 `repo-entrypoint-mapper` 梳理入口。
+3. 使用 `consumer-contract-mapper` 梳理输出消费者。
+4. 使用 `legacy-behavior-characterizer` 刻画旧行为。
+5. 使用 `dirty-data-case-designer` 设计脏数据样例。
+6. 使用 `refactor-slicer` 拆分功能扩展和重构计划。
+7. 使用 `compatibility-reviewer` 审查兼容性风险。
+8. 使用 `gray-release-planner` 规划灰度发布和回滚。
+
+## 运行模式
+
+单代理模式适用于小脚本、上下文规模可控、下游消费者明确的场景。主代理按默认节点顺序逐步执行，并在每个门禁处确认产物是否足够。
+
+多代理模式适用于仓库较大、文件分散、下游依赖不清、测试材料较多或需要独立审查视角的场景。主代理先调用 `subagent-delegation-planner` 形成委派计划，再把搜索面广、上下文重、可独立验收的节点交给子代理并行或串行完成。
+
+优先考虑委派的节点：
+
+- `repo-entrypoint-mapper`
+- `consumer-contract-mapper`
+- `legacy-behavior-characterizer`
+- `compatibility-reviewer`
+- `gray-release-planner`
+
+受控委派的节点：
+
+- `dirty-data-case-designer`
+- `refactor-slicer`
+
+总控编排、最终上线判断、回滚判断、破坏性变更接受与否必须由主代理保留。
+
+## 子代理产物回收
+
+主代理回收子代理结果时：
+
+1. 区分已确认事实、推断结论和待确认问题。
+2. 对多个子代理产物做去重、合并和冲突标记。
+3. 将影响下游兼容性的结论提升为高优先级风险。
+4. 把子代理产物映射回工作流门禁。
+5. 对无法复现或无法验证的结论标为风险，不直接作为实现或发布依据。
 
 ## 工作流门禁
 

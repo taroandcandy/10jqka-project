@@ -1,64 +1,120 @@
 # 遗留数据脚本治理工作流插件
 
-本仓库包含一个 Codex 插件，用于辅助改造遗留数据处理脚本。
+本仓库是对“遗留数据处理脚本扩展与重构”笔试题的一种工程化回答：不把答案停留在一次性论述，而是把“理解 -> 行为刻画 -> 扩展 -> 重构 -> 验证 -> 灰度交付”沉淀为一个可复用的 Codex 插件。
 
-插件采用“工作流编排层 + 可复用技能节点”的结构。工作流负责协调改造过程，每个技能负责一个聚焦、可审阅、可复用的单点操作。
+题目中的场景是：团队有一个运行多年的 Python 脚本，每天从 CSV 读取单只股票数据并计算移动平均线；现在要支持多股票批处理、按行业输出、处理停牌缺失数据，同时不能破坏下游报表依赖的旧输出格式。这个仓库给出的核心思路是：**先保护旧行为，再扩展新能力；先建立可验证工作流，再让 AI 参与每个可控节点。**
 
-插件支持单代理和多代理两种使用方式。小型任务可以由主代理顺序执行；仓库较大、上下文较多或需要独立审查时，可以先使用子代理委派规划节点，将入口梳理、下游契约、旧行为基线、兼容性审查等任务交给子代理并行产出工件，再由主代理统一收敛。
+## 给出题人的阅读路径
 
-## 插件位置
+建议按以下顺序审阅：
 
-插件路径：
+1. [WORKFLOW.md](WORKFLOW.md)：看整体工作流如何组织，以及为什么采用“编排层 + 技能节点 + 子代理”的结构。
+2. [PLAN.md](PLAN.md)：看实施计划、阶段门禁、子代理增强方案和后续落地顺序。
+3. `plugins/legacy-data-modernization-workflow/skills/*/SKILL.md`：看每个节点是否具备标准技能格式、清晰输入输出和验收标准。
+4. [PUBLISHING.md](PUBLISHING.md)：看该方案如何作为插件发布到 GitHub，并被使用方安装复用。
 
-```text
-plugins/legacy-data-modernization-workflow
-```
+## 答案亮点
 
-插件市场路径：
+这个方案不是让 AI 一次性重写旧脚本，而是把 AI 放进受控工程流程中：
+
+- **入口先行**：先定位脚本入口、运行参数、调度方式和配置来源。
+- **契约先行**：先识别下游报表和输出契约，再决定是否能改字段、格式和路径。
+- **基线先行**：先用基准输出和特征测试锁住旧行为，再扩展新功能。
+- **小步演进**：把重构和功能变化拆成可审查、可回滚的小切片。
+- **兼容审查**：独立检查字段顺序、日期格式、数值精度、空值表示、排序和退出行为。
+- **灰度交付**：通过影子运行、双写、小范围灰度、指标监控和回滚条件降低上线风险。
+- **子代理协作**：把耗时、上下文重、可独立验收的节点交给子代理，主代理保留最终判断权。
+
+## 插件结构
 
 ```text
 .agents/plugins/marketplace.json
+plugins/legacy-data-modernization-workflow/
+  .codex-plugin/plugin.json
+  agents/subagents.yaml
+  skills/
+    legacy-data-modernization-workflow/
+      SKILL.md
+      agents/openai.yaml
+    subagent-delegation-planner/
+      SKILL.md
+      agents/openai.yaml
+    repo-entrypoint-mapper/
+      SKILL.md
+      agents/openai.yaml
+    consumer-contract-mapper/
+      SKILL.md
+      agents/openai.yaml
+    legacy-behavior-characterizer/
+      SKILL.md
+      agents/openai.yaml
+    dirty-data-case-designer/
+      SKILL.md
+      agents/openai.yaml
+    refactor-slicer/
+      SKILL.md
+      agents/openai.yaml
+    compatibility-reviewer/
+      SKILL.md
+      agents/openai.yaml
+    gray-release-planner/
+      SKILL.md
+      agents/openai.yaml
 ```
 
-子代理角色配置：
+## 技能节点
+
+- `legacy-data-modernization-workflow`：总控技能，编排端到端治理流程。
+- `subagent-delegation-planner`：判断哪些节点适合交给子代理，并生成任务书和回收规则。
+- `repo-entrypoint-mapper`：梳理脚本入口、运行参数、配置、调度任务和调用路径。
+- `consumer-contract-mapper`：识别下游消费者和输出契约。
+- `legacy-behavior-characterizer`：捕获基准输出和特征测试。
+- `dirty-data-case-designer`：设计覆盖停牌缺失交易日、重复行、空字段、多股票输入和行业聚合的最小 CSV 样例。
+- `refactor-slicer`：把功能扩展和重构拆成安全的实现切片。
+- `compatibility-reviewer`：检查结构契约、文件、格式、排序、精度和运行行为的兼容风险。
+- `gray-release-planner`：规划影子运行、双写、灰度、监控和回滚。
+
+## 与题目要求的对应关系
+
+| 题目要求 | 对应实现 |
+| --- | --- |
+| 定位入口、调用方和输出消费者 | `repo-entrypoint-mapper`、`consumer-contract-mapper` |
+| 建立旧行为基线 | `legacy-behavior-characterizer` |
+| 分阶段流程设计 | `legacy-data-modernization-workflow`、`WORKFLOW.md`、`PLAN.md` |
+| 至少 3 条关键提示词 | 每个技能的 `SKILL.md` 和 `agents/openai.yaml` 都给出调用语义与默认提示 |
+| 构造最小 CSV 示例的处理规则 | `dirty-data-case-designer` |
+| 核心模块拆分和伪代码思路 | `refactor-slicer` 支撑后续 `DESIGN.md` |
+| 测试矩阵、灰度指标、回滚条件 | `compatibility-reviewer`、`gray-release-planner` |
+| 记录 AI 使用过程和拒绝大范围重写 | 总控流程要求 AI 输出可审计，并在技能约束中明确拒绝默认大重写 |
+
+## 子代理设计
+
+插件支持单代理和多代理两种运行方式。
+
+小型任务可以由主代理顺序执行。仓库较大、上下文较多或需要独立审查时，可以先调用 `subagent-delegation-planner`，再把入口梳理、下游契约、旧行为基线、兼容性审查等任务交给子代理并行处理。
+
+子代理角色定义在：
 
 ```text
 plugins/legacy-data-modernization-workflow/agents/subagents.yaml
 ```
 
-每个技能都包含自己的展示和默认调用配置：
+子代理只产出可审阅工件，不负责最终上线、回滚或破坏性变更决策。主代理负责汇总冲突、统一口径，并决定是否进入下一阶段门禁。
+
+## 验证状态
+
+当前插件已通过本地校验：
+
+- 9 个技能均通过 `quick_validate.py`。
+- 插件整体通过 `validate_plugin.py`。
+- 技能正文、README、WORKFLOW 和 PUBLISHING 已中文化，便于国内面试场景阅读。
+
+## 仓库发布
+
+该插件已经按 Codex 插件市场源组织，可发布到个人 GitHub 仓库：
 
 ```text
-plugins/legacy-data-modernization-workflow/skills/<技能标识>/agents/openai.yaml
+https://github.com/taroandcandy/10jqka-project
 ```
 
-## 技能节点
-
-- `legacy-data-modernization-workflow`：编排完整端到端流程。
-- `subagent-delegation-planner`：判断哪些节点适合交给子代理，并生成任务书和回收规则。
-- `repo-entrypoint-mapper`：梳理脚本入口、运行参数、配置、调度任务和调用路径。
-- `consumer-contract-mapper`：识别下游消费者和输出契约。
-- `legacy-behavior-characterizer`：捕获基准输出和特征测试。
-- `dirty-data-case-designer`：设计覆盖缺失交易日、重复行、空字段、多股票输入和行业聚合的最小 CSV 样例。
-- `refactor-slicer`：把功能扩展和重构拆成安全的实现切片。
-- `compatibility-reviewer`：检查结构契约、文件、格式、排序、精度和运行行为的兼容风险。
-- `gray-release-planner`：规划影子运行、双写、灰度、监控和回滚。
-
-## 使用场景
-
-当需要扩展遗留数据脚本，同时不能破坏存量用户或下游报表时，使用完整工作流。
-
-当只需要某个单点能力时，可以单独调用对应技能。例如：只审查一次输出结构契约变更，或只设计一组脏数据测试样例。
-
-当需要处理大仓库或复杂上下文时，可以先调用 `subagent-delegation-planner`。子代理只产出可审阅工件，不负责最终上线、回滚或破坏性变更决策。
-
-`agents/subagents.yaml` 记录了建议的子代理角色、适用场景、允许动作、禁止动作和必须返回的工件。主代理可以据此生成具体子代理任务书。
-
-## 上传到仓库
-
-当前目录已经按 Codex 插件市场源的形式组织，可以提交并推送到个人 GitHub 仓库。作为可复用插件源发布时，需要保留：
-
-- `.agents/plugins/marketplace.json`
-- `plugins/legacy-data-modernization-workflow`
-
-插件市场条目使用相对插件路径，因此仓库被克隆到本地后，可以作为插件市场源安装。
+使用方克隆仓库后，可以通过 `.agents/plugins/marketplace.json` 安装该插件。详细步骤见 [PUBLISHING.md](PUBLISHING.md)。

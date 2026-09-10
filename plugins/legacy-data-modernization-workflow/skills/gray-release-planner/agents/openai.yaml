@@ -1,0 +1,7 @@
+interface:
+  display_name: "灰度发布规划"
+  short_description: "规划影子运行、监控和回滚"
+  brand_color: "#4338CA"
+  default_prompt: "使用 $gray-release-planner，为这个遗留数据处理变更设计灰度发布、监控和回滚方案。"
+policy:
+  allow_implicit_invocation: true

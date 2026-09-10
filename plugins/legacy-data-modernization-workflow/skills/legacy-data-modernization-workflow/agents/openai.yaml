@@ -1,0 +1,7 @@
+interface:
+  display_name: "遗留数据脚本治理工作流"
+  short_description: "编排遗留数据脚本安全改造流程"
+  brand_color: "#2563EB"
+  default_prompt: "使用 $legacy-data-modernization-workflow，为我的遗留数据处理脚本设计一套安全改造工作流。"
+policy:
+  allow_implicit_invocation: true

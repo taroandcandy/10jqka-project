@@ -1,0 +1,7 @@
+interface:
+  display_name: "脏数据样例设计"
+  short_description: "设计停牌、重复行和空字段样例"
+  brand_color: "#BE123C"
+  default_prompt: "使用 $dirty-data-case-designer，为这个 CSV 数据处理需求设计最小脏数据测试样例。"
+policy:
+  allow_implicit_invocation: true

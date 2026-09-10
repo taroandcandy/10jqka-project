@@ -1,0 +1,7 @@
+interface:
+  display_name: "旧行为基线刻画"
+  short_description: "建立基准输出和特征测试"
+  brand_color: "#B45309"
+  default_prompt: "使用 $legacy-behavior-characterizer，为这个遗留数据脚本建立旧行为基线和特征测试。"
+policy:
+  allow_implicit_invocation: true

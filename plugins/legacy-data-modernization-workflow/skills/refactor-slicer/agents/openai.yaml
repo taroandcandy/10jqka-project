@@ -1,0 +1,7 @@
+interface:
+  display_name: "安全重构切片"
+  short_description: "拆分小步可审查可回滚变更"
+  brand_color: "#4D7C0F"
+  default_prompt: "使用 $refactor-slicer，把这个遗留脚本改造拆成小步、可审查、可回滚的实现切片。"
+policy:
+  allow_implicit_invocation: true

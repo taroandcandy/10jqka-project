@@ -20,6 +20,18 @@ plugins/legacy-data-modernization-workflow
 .agents/plugins/marketplace.json
 ```
 
+子代理角色配置：
+
+```text
+plugins/legacy-data-modernization-workflow/agents/subagents.yaml
+```
+
+每个技能都包含自己的展示和默认调用配置：
+
+```text
+plugins/legacy-data-modernization-workflow/skills/<技能标识>/agents/openai.yaml
+```
+
 ## 技能节点
 
 - `legacy-data-modernization-workflow`：编排完整端到端流程。
@@ -39,6 +51,8 @@ plugins/legacy-data-modernization-workflow
 当只需要某个单点能力时，可以单独调用对应技能。例如：只审查一次输出结构契约变更，或只设计一组脏数据测试样例。
 
 当需要处理大仓库或复杂上下文时，可以先调用 `subagent-delegation-planner`。子代理只产出可审阅工件，不负责最终上线、回滚或破坏性变更决策。
+
+`agents/subagents.yaml` 记录了建议的子代理角色、适用场景、允许动作、禁止动作和必须返回的工件。主代理可以据此生成具体子代理任务书。
 
 ## 上传到仓库
 

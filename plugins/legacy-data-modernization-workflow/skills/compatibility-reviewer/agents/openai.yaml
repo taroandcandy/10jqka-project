@@ -1,0 +1,7 @@
+interface:
+  display_name: "兼容性审查"
+  short_description: "审查下游输出兼容性风险"
+  brand_color: "#C2410C"
+  default_prompt: "使用 $compatibility-reviewer，审查这个遗留数据处理变更的下游兼容性风险。"
+policy:
+  allow_implicit_invocation: true

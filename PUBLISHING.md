@@ -9,6 +9,8 @@
 ```text
 .agents/plugins/marketplace.json
 plugins/legacy-data-modernization-workflow/.codex-plugin/plugin.json
+plugins/legacy-data-modernization-workflow/agents/subagents.yaml
+plugins/legacy-data-modernization-workflow/skills/*/agents/openai.yaml
 plugins/legacy-data-modernization-workflow/skills/*/SKILL.md
 ```
 

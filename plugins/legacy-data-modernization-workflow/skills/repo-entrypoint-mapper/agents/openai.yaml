@@ -1,0 +1,7 @@
+interface:
+  display_name: "入口与调用链梳理"
+  short_description: "识别脚本入口、参数、配置和调度"
+  brand_color: "#1D4ED8"
+  default_prompt: "使用 $repo-entrypoint-mapper，梳理这个遗留仓库的脚本入口、运行参数、配置和调用链。"
+policy:
+  allow_implicit_invocation: true

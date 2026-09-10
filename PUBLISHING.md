@@ -28,7 +28,11 @@ https://github.com/taroandcandy/10jqka-project
 README.md
 WORKFLOW.md
 PLAN.md
+DESIGN.md
+TEST_MATRIX.md
+AI_USAGE.md
 PUBLISHING.md
+examples/
 .agents/plugins/marketplace.json
 plugins/legacy-data-modernization-workflow/.codex-plugin/plugin.json
 plugins/legacy-data-modernization-workflow/agents/subagents.yaml
@@ -41,6 +45,10 @@ plugins/legacy-data-modernization-workflow/skills/*/agents/openai.yaml
 - `README.md` 面向出题人解释方案价值、题目对应关系和插件结构。
 - `WORKFLOW.md` 描述完整工作流、门禁、单代理和多代理模式。
 - `PLAN.md` 记录实施计划和后续扩展步骤。
+- `DESIGN.md` 说明核心模块划分、兼容适配层和关键伪代码。
+- `TEST_MATRIX.md` 说明测试矩阵、预期结果、灰度指标、回滚条件和下游报表兼容性验证。
+- `AI_USAGE.md` 记录 AI 在理解、重构、测试和 Review 中的上下文、输出、验证和拒绝大范围重写的原因。
+- `examples/` 提供最小 CSV 样例和预期输出。
 - `.agents/plugins/marketplace.json` 让仓库可以作为 Codex 插件市场源。
 - `plugin.json` 是插件清单。
 - `skills/*/SKILL.md` 是每个节点的标准技能定义。
@@ -80,9 +88,13 @@ legacy-data-modernization-workflow
 
 1. 查看 `README.md` 是否解释清楚题目背景和方案主线。
 2. 查看 `WORKFLOW.md` 是否覆盖理解、行为刻画、扩展、重构、验证、灰度和回滚。
-3. 查看各 `SKILL.md` 是否都有输入、执行步骤、输出格式和验收标准。
-4. 查看 `agents/subagents.yaml` 是否把耗时、上下文重的节点配置成可委派 subagent。
-5. 运行发布前校验命令，确认插件结构有效。
+3. 查看 `README.md` 的交付表是否逐步列出输入、输出、风险、验证方法和下游影响。
+4. 查看 `DESIGN.md` 是否展示解析、计算、行业聚合和输出如何解耦并保持兼容。
+5. 查看 `TEST_MATRIX.md` 和 `examples/` 是否覆盖最小 CSV、预期结果、灰度指标、回滚条件和下游兼容验证。
+6. 查看 `AI_USAGE.md` 是否记录 AI 在理解、重构、测试和 Review 中的关键上下文、输出、验证，并包含一次拒绝大范围重写建议的原因。
+7. 查看各 `SKILL.md` 是否都有输入、执行步骤、输出格式和验收标准。
+8. 查看 `agents/subagents.yaml` 是否把耗时、上下文重的节点配置成可委派 subagent。
+9. 运行发布前校验命令，确认插件结构有效。
 
 ## 当前版本说明
 
@@ -93,4 +105,5 @@ legacy-data-modernization-workflow
 - 10 个工作流节点技能。
 - 10 个 subagent 角色配置。
 - 每个技能的中文展示配置。
-- 中文 README、WORKFLOW、PLAN 和 PUBLISHING。
+- 中文 README、WORKFLOW、PLAN、DESIGN、TEST_MATRIX、AI_USAGE 和 PUBLISHING。
+- 最小 CSV 样例和预期输出文件。

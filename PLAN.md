@@ -21,6 +21,15 @@
 
 ## 2. 计划交付物
 
+当前补齐目标是把插件能力转化为出题人可以直接检查的学生提交物。插件技能负责“怎么做”，顶层文档负责“交付什么、如何验证、为什么安全”。
+
+| 交付要求 | 目标文件 | 当前执行项 |
+| --- | --- | --- |
+| 维护交付 README | `README.md` | 增加六阶段输入、输出、风险、验证方法和下游影响表 |
+| 核心模块划分和关键伪代码 | `DESIGN.md` | 新增模块边界、兼容适配层和解析、计算、行业聚合、输出伪代码 |
+| 自建测试矩阵、预期结果、灰度指标、回滚条件和下游兼容验证 | `TEST_MATRIX.md`、`examples/` | 新增测试矩阵和最小 CSV/预期输出样例 |
+| AI 使用记录 | `AI_USAGE.md` | 新增理解、重构、测试、Review 的上下文、输出、验证和拒绝大范围重写记录 |
+
 ### 2.1 README.md
 
 主交付文档，回答题目中的工作流要求。
@@ -111,7 +120,18 @@ AI 使用记录，回答题目中关于提示词和 AI 介入过程的要求。
 - `examples/expected_legacy_output.csv`
 - `examples/expected_industry_output.csv`
 
-### 2.7 SUBAGENT_STRATEGY.md
+### 2.7 当前执行顺序
+
+本轮执行不再停留在计划阶段，按以下顺序补齐交付物：
+
+1. 更新 `README.md`，显式覆盖学生提交要求中的端到端工作流表。
+2. 新增 `DESIGN.md`，说明模块划分、数据结构和关键伪代码。
+3. 新增 `TEST_MATRIX.md`，给出测试矩阵、预期结果、灰度指标、回滚条件和下游兼容验证。
+4. 新增 `AI_USAGE.md`，记录 AI 使用边界、关键 prompt、验证方式和拒绝大范围重写的理由。
+5. 新增 `examples/` 样例文件，用最小 CSV 支撑测试矩阵。
+6. 运行技能校验和插件校验，确认交付物与插件结构一致。
+
+### 2.8 SUBAGENT_STRATEGY.md
 
 subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些节点必须由主代理保留决策权。
 
@@ -136,11 +156,11 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 | --- | --- | --- | --- |
 | 理解 | `repo-entrypoint-mapper`、`consumer-contract-mapper` | 已实现 | 无 |
 | 行为刻画 | `legacy-behavior-characterizer` | 已实现 | 无 |
-| 扩展 | `feature-extension-planner`、`dirty-data-case-designer` | 待新增 | 新增扩展设计技能 |
+| 扩展 | `feature-extension-planner`、`dirty-data-case-designer` | 已实现 | 无 |
 | 重构 | `refactor-slicer` | 已实现 | 与扩展设计衔接 |
-| 验证 | `regression-validation-planner`、`compatibility-reviewer` | 待新增 | 新增回归验证技能 |
+| 验证 | `regression-validation-planner`、`compatibility-reviewer` | 已实现 | 无 |
 | 灰度交付 | `gray-release-planner` | 已实现 | 与验证结果衔接 |
-| AI 使用记录 | `ai-usage-recorder` | 待新增 | 新增 AI_USAGE 记录技能 |
+| AI 使用记录 | `ai-usage-recorder` | 已实现 | 无 |
 
 最终总控链路应调整为：
 
@@ -425,17 +445,20 @@ subagent 委派规划
 
 ## 4. 实施边界
 
-在你审阅并确认本计划前，暂不执行以下动作：
+本仓库回答的是笔试题中的工程方案和插件化工作流，不假设已经拿到真实生产源码，也不模拟真实生产发布。
 
-- 不编写 README、SKILLS_SPEC、DESIGN、TEST_MATRIX、AI_USAGE 的正式内容。
-- 不创建 examples 样例文件。
-- 不做最终提交。
-- 不假设存在真实遗留源码。
+可以执行：
 
-本阶段只完成：
+- 编写 README、DESIGN、TEST_MATRIX、AI_USAGE 等交付文档。
+- 创建最小 CSV 样例和预期输出。
+- 校验 Codex 插件和技能格式。
 
-- 创建工作目录。
-- 创建可审阅的计划文档。
+不执行：
+
+- 不连接真实生产调度系统。
+- 不覆盖真实下游报表。
+- 不提交破坏性重构。
+- 不把样例数据伪装成真实生产数据。
 
 ## 5. 建议执行顺序
 

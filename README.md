@@ -10,8 +10,11 @@
 
 1. [WORKFLOW.md](WORKFLOW.md)：看整体工作流如何组织，以及为什么采用“编排层 + 技能节点 + subagent”的结构。
 2. [PLAN.md](PLAN.md)：看实施计划、阶段门禁、subagent 增强方案和后续落地顺序。
-3. `plugins/legacy-data-modernization-workflow/skills/*/SKILL.md`：看每个节点是否具备标准技能格式、清晰输入输出和验收标准。
-4. [PUBLISHING.md](PUBLISHING.md)：看该方案如何作为插件发布到 GitHub，并被使用方安装复用。
+3. [DESIGN.md](DESIGN.md)：看核心模块划分和关键伪代码，确认解析、计算、行业聚合、输出之间已经解耦。
+4. [TEST_MATRIX.md](TEST_MATRIX.md)：看测试矩阵、预期结果、灰度指标、回滚条件和下游报表兼容性验证。
+5. [AI_USAGE.md](AI_USAGE.md)：看 AI 在理解、重构、测试和 Review 中如何被约束、验证，以及为什么拒绝大范围重写。
+6. `plugins/legacy-data-modernization-workflow/skills/*/SKILL.md`：看每个节点是否具备标准技能格式、清晰输入输出和验收标准。
+7. [PUBLISHING.md](PUBLISHING.md)：看该方案如何作为插件发布到 GitHub，并被使用方安装复用。
 
 ## 答案亮点
 
@@ -95,10 +98,21 @@ plugins/legacy-data-modernization-workflow/
 | 分阶段流程设计 | `legacy-data-modernization-workflow`、`WORKFLOW.md`、`PLAN.md` |
 | 至少 3 条关键提示词 | 每个技能的 `SKILL.md` 和 `agents/openai.yaml` 都给出调用语义与默认提示 |
 | 扩展多股票、行业输出和停牌处理 | `feature-extension-planner`、`dirty-data-case-designer` |
-| 核心模块拆分和伪代码思路 | `refactor-slicer` 支撑后续 `DESIGN.md` |
-| 测试矩阵和下游兼容验证 | `regression-validation-planner`、`compatibility-reviewer` |
-| 灰度指标和回滚条件 | `gray-release-planner` |
-| 记录 AI 使用过程和拒绝大范围重写 | `ai-usage-recorder` |
+| 核心模块拆分和伪代码思路 | [DESIGN.md](DESIGN.md)、`refactor-slicer` |
+| 测试矩阵和下游兼容验证 | [TEST_MATRIX.md](TEST_MATRIX.md)、`regression-validation-planner`、`compatibility-reviewer` |
+| 灰度指标和回滚条件 | [TEST_MATRIX.md](TEST_MATRIX.md)、`gray-release-planner` |
+| 记录 AI 使用过程和拒绝大范围重写 | [AI_USAGE.md](AI_USAGE.md)、`ai-usage-recorder` |
+
+## 交付 README：端到端工作流
+
+| 阶段 | 输入 | 关键动作 | 输出 | 主要风险 | 验证方法 | 下游影响控制 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 理解 | 源码、调度脚本、样例 CSV、历史输出、报表目录 | 定位入口、参数、配置、调用方和输出消费者 | 入口地图、消费者契约表、未知项清单 | 误判真实入口，遗漏报表依赖 | `rg` 搜索入口和输出路径，检查调度配置，抽样打开下游报表引用 | 在确认消费者契约前不改文件名、字段顺序、日期格式和数值精度 |
+| 行为刻画 | 旧脚本、历史输入输出、消费者契约 | 固化基准样例，记录移动平均、排序、空值和异常处理 | 基准输出、特征测试、旧行为说明 | 把旧缺陷误当成新需求修掉，导致隐性兼容问题 | 基准文件回归，新旧脚本对同一输入逐列对比 | 旧单股票路径必须保持默认兼容 |
+| 扩展 | 新需求、入口地图、旧行为基线、脏数据样例 | 设计多股票分组、行业聚合、停牌处理和新输出路径 | 扩展设计表、字段契约、诊断输出规则 | 新字段污染旧输出，停牌补齐口径不一致 | 用 `examples/multi_stock_with_industry.csv` 对照预期输出 | 新能力默认新增输出，不覆盖旧报表读取的旧文件 |
+| 重构 | 旧行为基线、扩展方案、模块边界 | 小步拆分解析、清洗、计算、聚合、输出和兼容适配层 | 模块设计、伪代码、切片计划 | 大范围重写引入不可定位回归 | 每个切片后运行基准测试和结构契约测试 | 兼容适配层保留旧字段、旧路径和旧排序 |
+| 验证 | 测试矩阵、样例数据、预期输出、下游报表契约 | 执行单元、基准、结构、下游冒烟、性能和差异验证 | 验证报告、失败项、风险豁免 | 只测新功能，忽略旧报表 | 见 [TEST_MATRIX.md](TEST_MATRIX.md) 的测试矩阵 | 报表冒烟必须覆盖旧文件读取和字段解析 |
+| 灰度交付 | 验证报告、监控指标、回滚预案 | 影子运行、双写、小股票池灰度、行业灰度、监控和回滚 | 灰度计划、指标阈值、回滚条件 | 生产数据量或质量与样例不同 | 监控行数、缺失率、重复率、差异率、耗时和报表成功率 | 功能开关保留旧路径，异常时切回旧脚本或旧输出 |
 
 ## subagent 设计
 

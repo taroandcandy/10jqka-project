@@ -44,7 +44,7 @@ plugins/legacy-data-modernization-workflow/skills/*/agents/openai.yaml
 - `.agents/plugins/marketplace.json` 让仓库可以作为 Codex 插件市场源。
 - `plugin.json` 是插件清单。
 - `skills/*/SKILL.md` 是每个节点的标准技能定义。
-- `agents/subagents.yaml` 是子代理角色配置。
+- `agents/subagents.yaml` 是 subagent 角色配置。
 - `skills/*/agents/openai.yaml` 是每个技能的中文展示和默认调用配置。
 
 ## 发布前校验
@@ -126,7 +126,7 @@ legacy-data-modernization-workflow
 1. 查看 `README.md` 是否解释清楚题目背景和方案主线。
 2. 查看 `WORKFLOW.md` 是否覆盖理解、行为刻画、扩展、重构、验证、灰度和回滚。
 3. 查看各 `SKILL.md` 是否都有输入、执行步骤、输出格式和验收标准。
-4. 查看 `agents/subagents.yaml` 是否把耗时、上下文重的节点配置成可委派子代理。
+4. 查看 `agents/subagents.yaml` 是否把耗时、上下文重的节点配置成可委派 subagent。
 5. 运行发布前校验命令，确认插件结构有效。
 
 ## 当前版本说明
@@ -134,9 +134,9 @@ legacy-data-modernization-workflow
 当前版本已经具备：
 
 - 1 个总控工作流技能。
-- 1 个子代理委派规划技能。
+- 1 个 subagent 委派规划技能。
 - 7 个工作流节点技能。
-- 7 个子代理角色配置。
+- 7 个 subagent 角色配置。
 - 每个技能的中文展示配置。
 - 中文 README、WORKFLOW、PLAN 和 PUBLISHING。
 

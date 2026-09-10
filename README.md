@@ -8,8 +8,8 @@
 
 建议按以下顺序审阅：
 
-1. [WORKFLOW.md](WORKFLOW.md)：看整体工作流如何组织，以及为什么采用“编排层 + 技能节点 + 子代理”的结构。
-2. [PLAN.md](PLAN.md)：看实施计划、阶段门禁、子代理增强方案和后续落地顺序。
+1. [WORKFLOW.md](WORKFLOW.md)：看整体工作流如何组织，以及为什么采用“编排层 + 技能节点 + subagent”的结构。
+2. [PLAN.md](PLAN.md)：看实施计划、阶段门禁、subagent 增强方案和后续落地顺序。
 3. `plugins/legacy-data-modernization-workflow/skills/*/SKILL.md`：看每个节点是否具备标准技能格式、清晰输入输出和验收标准。
 4. [PUBLISHING.md](PUBLISHING.md)：看该方案如何作为插件发布到 GitHub，并被使用方安装复用。
 
@@ -23,7 +23,7 @@
 - **小步演进**：把重构和功能变化拆成可审查、可回滚的小切片。
 - **兼容审查**：独立检查字段顺序、日期格式、数值精度、空值表示、排序和退出行为。
 - **灰度交付**：通过影子运行、双写、小范围灰度、指标监控和回滚条件降低上线风险。
-- **子代理协作**：把耗时、上下文重、可独立验收的节点交给子代理，主代理保留最终判断权。
+- **subagent 协作**：把耗时、上下文重、可独立验收的节点交给 subagent，主代理保留最终判断权。
 
 ## 插件结构
 
@@ -65,7 +65,7 @@ plugins/legacy-data-modernization-workflow/
 ## 技能节点
 
 - `legacy-data-modernization-workflow`：总控技能，编排端到端治理流程。
-- `subagent-delegation-planner`：判断哪些节点适合交给子代理，并生成任务书和回收规则。
+- `subagent-delegation-planner`：判断哪些节点适合交给 subagent，并生成任务书和回收规则。
 - `repo-entrypoint-mapper`：梳理脚本入口、运行参数、配置、调度任务和调用路径。
 - `consumer-contract-mapper`：识别下游消费者和输出契约。
 - `legacy-behavior-characterizer`：捕获基准输出和特征测试。
@@ -87,19 +87,19 @@ plugins/legacy-data-modernization-workflow/
 | 测试矩阵、灰度指标、回滚条件 | `compatibility-reviewer`、`gray-release-planner` |
 | 记录 AI 使用过程和拒绝大范围重写 | 总控流程要求 AI 输出可审计，并在技能约束中明确拒绝默认大重写 |
 
-## 子代理设计
+## subagent 设计
 
 插件支持单代理和多代理两种运行方式。
 
-小型任务可以由主代理顺序执行。仓库较大、上下文较多或需要独立审查时，可以先调用 `subagent-delegation-planner`，再把入口梳理、下游契约、旧行为基线、兼容性审查等任务交给子代理并行处理。
+小型任务可以由主代理顺序执行。仓库较大、上下文较多或需要独立审查时，可以先调用 `subagent-delegation-planner`，再把入口梳理、下游契约、旧行为基线、兼容性审查等任务交给 subagent 并行处理。
 
-子代理角色定义在：
+subagent 角色定义在：
 
 ```text
 plugins/legacy-data-modernization-workflow/agents/subagents.yaml
 ```
 
-子代理只产出可审阅工件，不负责最终上线、回滚或破坏性变更决策。主代理负责汇总冲突、统一口径，并决定是否进入下一阶段门禁。
+subagent 只产出可审阅工件，不负责最终上线、回滚或破坏性变更决策。主代理负责汇总冲突、统一口径，并决定是否进入下一阶段门禁。
 
 ## 验证状态
 

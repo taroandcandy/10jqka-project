@@ -13,15 +13,15 @@
 
 单代理模式适用于小脚本、文件量较少、入口和下游依赖比较明确的场景。主代理按节点链路顺序执行，每个节点产物通过门禁后再进入下一步。
 
-多代理模式适用于仓库较大、调用链分散、下游消费者不明确、测试材料较多或需要独立审查视角的场景。主代理先使用 `subagent-delegation-planner` 生成委派计划，再把适合并行探索的节点交给子代理。
+多代理模式适用于仓库较大、调用链分散、下游消费者不明确、测试材料较多或需要独立审查视角的场景。主代理先使用 `subagent-delegation-planner` 生成委派计划，再把适合并行探索的节点交给 subagent。
 
-无论是否启用子代理，主代理都保留最终判断权：是否接受破坏性变更、是否上线、是否回滚，以及最终交付口径，不能交给子代理决定。
+无论是否启用 subagent，主代理都保留最终判断权：是否接受破坏性变更、是否上线、是否回滚，以及最终交付口径，不能交给 subagent 决定。
 
 ## 节点链路
 
 | 顺序 | 节点 | 主要产物 | 下游消费方 |
 | --- | --- | --- | --- |
-| 0 | `subagent-delegation-planner` | 子代理委派计划 | 主代理编排 |
+| 0 | `subagent-delegation-planner` | subagent 委派计划 | 主代理编排 |
 | 1 | `repo-entrypoint-mapper` | 入口和调用路径图 | `consumer-contract-mapper`、`legacy-behavior-characterizer` |
 | 2 | `consumer-contract-mapper` | 输出消费者契约表 | `legacy-behavior-characterizer`、`compatibility-reviewer` |
 | 3 | `legacy-behavior-characterizer` | 基准文件和特征测试 | `refactor-slicer`、`compatibility-reviewer` |
@@ -30,7 +30,7 @@
 | 6 | `compatibility-reviewer` | 兼容性问题和必要缓解措施 | 发布准备 |
 | 7 | `gray-release-planner` | 灰度发布和回滚计划 | 交付 |
 
-## 子代理委派边界
+## subagent 委派边界
 
 强委派节点：
 
@@ -51,21 +51,21 @@
 - 上线、回滚和破坏性变更审批。
 - 涉及真实生产写入、删除、覆盖旧输出或发布的动作。
 
-子代理产物必须区分已确认事实、推断结论和待确认问题。主代理负责合并冲突、提升兼容性风险优先级，并将结果映射回工作流门禁。
+subagent 产物必须区分已确认事实、推断结论和待确认问题。主代理负责合并冲突、提升兼容性风险优先级，并将结果映射回工作流门禁。
 
-## 子代理配置文件
+## subagent 配置文件
 
-插件根目录的 `agents/subagents.yaml` 定义了可复用子代理角色：
+插件根目录的 `agents/subagents.yaml` 定义了可复用 subagent 角色：
 
-- 入口探索子代理。
-- 下游契约子代理。
-- 旧行为基线子代理。
-- 脏数据样例子代理。
-- 重构切片子代理。
-- 兼容性审查子代理。
-- 灰度发布子代理。
+- 入口探索 subagent。
+- 下游契约 subagent。
+- 旧行为基线 subagent。
+- 脏数据样例 subagent。
+- 重构切片 subagent。
+- 兼容性审查 subagent。
+- 灰度发布 subagent。
 
-这些配置用于生成子代理任务书，而不是绕过主代理或自动执行高风险操作。真实运行时是否创建子代理，仍由主代理根据当前任务、上下文规模和用户授权决定。
+这些配置用于生成 subagent 任务书，而不是绕过主代理或自动执行高风险操作。真实运行时是否创建 subagent，仍由主代理根据当前任务、上下文规模和用户授权决定。
 
 ## 工作流门禁规则
 
@@ -86,8 +86,8 @@
 使用 $compatibility-reviewer，对这个输出结构契约变更做下游兼容性审查。
 ```
 
-规划子代理协作：
+规划 subagent 协作：
 
 ```text
-使用 $subagent-delegation-planner，判断这个遗留数据脚本改造任务中哪些节点适合交给子代理，并为每个子代理生成任务书。
+使用 $subagent-delegation-planner，判断这个遗留数据脚本改造任务中哪些节点适合交给 subagent，并为每个 subagent 生成任务书。
 ```

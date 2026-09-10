@@ -51,13 +51,22 @@ plugins/legacy-data-modernization-workflow/
     dirty-data-case-designer/
       SKILL.md
       agents/openai.yaml
+    feature-extension-planner/
+      SKILL.md
+      agents/openai.yaml
     refactor-slicer/
+      SKILL.md
+      agents/openai.yaml
+    regression-validation-planner/
       SKILL.md
       agents/openai.yaml
     compatibility-reviewer/
       SKILL.md
       agents/openai.yaml
     gray-release-planner/
+      SKILL.md
+      agents/openai.yaml
+    ai-usage-recorder/
       SKILL.md
       agents/openai.yaml
 ```
@@ -70,9 +79,12 @@ plugins/legacy-data-modernization-workflow/
 - `consumer-contract-mapper`：识别下游消费者和输出契约。
 - `legacy-behavior-characterizer`：捕获基准输出和特征测试。
 - `dirty-data-case-designer`：设计覆盖停牌缺失交易日、重复行、空字段、多股票输入和行业聚合的最小 CSV 样例。
-- `refactor-slicer`：把功能扩展和重构拆成安全的实现切片。
+- `feature-extension-planner`：设计多股票批处理、行业输出、停牌缺失数据处理和旧输出兼容方案。
+- `refactor-slicer`：把重构拆成安全的实现切片。
+- `regression-validation-planner`：设计单元、基准文件、结构契约、下游冒烟、新旧差异和性能验证。
 - `compatibility-reviewer`：检查结构契约、文件、格式、排序、精度和运行行为的兼容风险。
 - `gray-release-planner`：规划影子运行、双写、灰度、监控和回滚。
+- `ai-usage-recorder`：生成 AI_USAGE.md，记录 AI 参与过程、关键提示词、验证方式和拒绝大范围重写的原因。
 
 ## 与题目要求的对应关系
 
@@ -82,10 +94,11 @@ plugins/legacy-data-modernization-workflow/
 | 建立旧行为基线 | `legacy-behavior-characterizer` |
 | 分阶段流程设计 | `legacy-data-modernization-workflow`、`WORKFLOW.md`、`PLAN.md` |
 | 至少 3 条关键提示词 | 每个技能的 `SKILL.md` 和 `agents/openai.yaml` 都给出调用语义与默认提示 |
-| 构造最小 CSV 示例的处理规则 | `dirty-data-case-designer` |
+| 扩展多股票、行业输出和停牌处理 | `feature-extension-planner`、`dirty-data-case-designer` |
 | 核心模块拆分和伪代码思路 | `refactor-slicer` 支撑后续 `DESIGN.md` |
-| 测试矩阵、灰度指标、回滚条件 | `compatibility-reviewer`、`gray-release-planner` |
-| 记录 AI 使用过程和拒绝大范围重写 | 总控流程要求 AI 输出可审计，并在技能约束中明确拒绝默认大重写 |
+| 测试矩阵和下游兼容验证 | `regression-validation-planner`、`compatibility-reviewer` |
+| 灰度指标和回滚条件 | `gray-release-planner` |
+| 记录 AI 使用过程和拒绝大范围重写 | `ai-usage-recorder` |
 
 ## subagent 设计
 
@@ -105,7 +118,7 @@ subagent 只产出可审阅工件，不负责最终上线、回滚或破坏性�
 
 当前插件已通过本地校验：
 
-- 9 个技能均通过 `quick_validate.py`。
+- 12 个技能均通过 `quick_validate.py`。
 - 插件整体通过 `validate_plugin.py`。
 - 技能正文、README、WORKFLOW 和 PUBLISHING 已中文化，便于国内面试场景阅读。
 

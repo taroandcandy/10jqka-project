@@ -76,7 +76,7 @@ legacy-data-modernization-workflow
 
 ## 面向出题人的复现方式
 
-评审可以接入生产股票数据并接入完整旧系统。可以通过以下方式判断方案是否完整：
+评审不需要接入真实生产股票数据，也不需要准备完整旧系统。可以通过以下方式判断方案是否完整：
 
 1. 查看 `README.md` 是否解释清楚题目背景和方案主线。
 2. 查看 `WORKFLOW.md` 是否覆盖理解、行为刻画、扩展、重构、验证、灰度和回滚。
@@ -90,8 +90,7 @@ legacy-data-modernization-workflow
 
 - 1 个总控工作流技能。
 - 1 个 subagent 委派规划技能。
-- 7 个工作流节点技能。
-- 7 个 subagent 角色配置。
+- 10 个工作流节点技能。
+- 10 个 subagent 角色配置。
 - 每个技能的中文展示配置。
 - 中文 README、WORKFLOW、PLAN 和 PUBLISHING。
-

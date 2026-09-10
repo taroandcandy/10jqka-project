@@ -1,0 +1,7 @@
+interface:
+  display_name: "AI 使用记录"
+  short_description: "生成可审计的 AI_USAGE.md"
+  brand_color: "#475569"
+  default_prompt: "使用 $ai-usage-recorder，为这个遗留数据脚本治理过程生成 AI_USAGE.md。"
+policy:
+  allow_implicit_invocation: true

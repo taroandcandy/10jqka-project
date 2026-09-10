@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "遗留数据脚本治理工作流",
     "shortDescription": "安全改造遗留数据处理脚本。",
-    "longDescription": "一个 Codex 插件，把遗留数据脚本改造拆解为可复用的工作流节点：入口识别、下游契约梳理、旧行为刻画、脏数据样例设计、重构切片、兼容性审查、灰度发布与回滚规划。",
+    "longDescription": "一个 Codex 插件，把遗留数据脚本改造拆解为可复用的工作流节点：入口识别、下游契约梳理、旧行为刻画、功能扩展设计、脏数据样例设计、重构切片、回归验证、兼容性审查、灰度发布与回滚规划，以及 AI 使用记录。",
     "developerName": "本地开发者",
     "category": "Productivity",
     "capabilities": [

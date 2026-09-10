@@ -1,0 +1,7 @@
+interface:
+  display_name: "回归验证设计"
+  short_description: "设计回归、契约、下游和性能验证"
+  brand_color: "#9333EA"
+  default_prompt: "使用 $regression-validation-planner，为这个遗留数据处理脚本改造设计完整回归验证体系。"
+policy:
+  allow_implicit_invocation: true

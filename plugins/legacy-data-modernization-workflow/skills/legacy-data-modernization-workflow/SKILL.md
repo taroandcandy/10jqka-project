@@ -20,9 +20,12 @@ metadata:
 3. 使用 `consumer-contract-mapper` 梳理输出消费者。
 4. 使用 `legacy-behavior-characterizer` 刻画旧行为。
 5. 使用 `dirty-data-case-designer` 设计脏数据样例。
-6. 使用 `refactor-slicer` 拆分功能扩展和重构计划。
-7. 使用 `compatibility-reviewer` 审查兼容性风险。
-8. 使用 `gray-release-planner` 规划灰度发布和回滚。
+6. 使用 `feature-extension-planner` 设计功能扩展方案。
+7. 使用 `refactor-slicer` 拆分重构计划。
+8. 使用 `regression-validation-planner` 设计验证体系。
+9. 使用 `compatibility-reviewer` 审查兼容性风险。
+10. 使用 `gray-release-planner` 规划灰度发布和回滚。
+11. 使用 `ai-usage-recorder` 记录 AI 使用过程。
 
 ## 运行模式
 
@@ -35,13 +38,16 @@ metadata:
 - `repo-entrypoint-mapper`
 - `consumer-contract-mapper`
 - `legacy-behavior-characterizer`
+- `regression-validation-planner`
 - `compatibility-reviewer`
 - `gray-release-planner`
 
 受控委派的节点：
 
 - `dirty-data-case-designer`
+- `feature-extension-planner`
 - `refactor-slicer`
+- `ai-usage-recorder`
 
 总控编排、最终上线判断、回滚判断、破坏性变更接受与否必须由主代理保留。
 

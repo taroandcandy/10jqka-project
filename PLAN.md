@@ -87,14 +87,18 @@ AI 使用记录，回答题目中关于提示词和 AI 介入过程的要求。
 
 计划定义的技能：
 
+- `legacy-data-modernization-workflow`：总控编排理解、行为刻画、扩展、重构、验证、灰度交付全流程。
+- `subagent-delegation-planner`：判断哪些节点适合委派给 subagent，并定义任务边界、输入材料、输出工件和回收方式。
 - `repo-entrypoint-mapper`：定位入口、参数、配置、调度任务和调用链。
 - `consumer-contract-mapper`：识别下游报表、文件消费者和输出契约。
 - `legacy-behavior-characterizer`：生成基准样例和旧行为基线。
 - `dirty-data-case-designer`：设计停牌、重复行、空字段、跨行业等边界样例。
-- `compatibility-reviewer`：检查字段、格式、路径、数值精度、排序等兼容风险。
+- `feature-extension-planner`：专门设计多股票批处理、行业输出、停牌缺失数据处理和旧输出兼容的扩展方案。
 - `refactor-slicer`：把重构拆成低风险小步变更。
+- `regression-validation-planner`：专门设计单元测试、基准文件回归、结构契约测试、下游冒烟、新旧差异和性能验证。
+- `compatibility-reviewer`：检查字段、格式、路径、数值精度、排序等兼容风险。
 - `gray-release-planner`：设计影子运行、双写、灰度指标和回滚条件。
-- `subagent-delegation-planner`：判断哪些节点适合委派给 subagent，并定义任务边界、输入材料、输出工件和回收方式。
+- `ai-usage-recorder`：专门生成 AI_USAGE.md，记录 AI 在理解、重构、测试和审查中的上下文、输出、验证和拒绝大范围重写的原因。
 
 ### 2.6 examples/
 
@@ -123,6 +127,34 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 该文档也可以并入 WORKFLOW.md。如果内容较短，优先放在 WORKFLOW.md；如果后续扩展为团队级规范，则单独维护。
 
 ## 3. 分阶段执行流程
+
+### 题目六阶段与技能节点对齐
+
+为避免“流程节点隐含在其他节点中”，最终插件必须显式覆盖题目要求的六阶段：
+
+| 题目阶段 | 显式技能节点 | 当前状态 | 需要补强 |
+| --- | --- | --- | --- |
+| 理解 | `repo-entrypoint-mapper`、`consumer-contract-mapper` | 已实现 | 无 |
+| 行为刻画 | `legacy-behavior-characterizer` | 已实现 | 无 |
+| 扩展 | `feature-extension-planner`、`dirty-data-case-designer` | 待新增 | 新增扩展设计技能 |
+| 重构 | `refactor-slicer` | 已实现 | 与扩展设计衔接 |
+| 验证 | `regression-validation-planner`、`compatibility-reviewer` | 待新增 | 新增回归验证技能 |
+| 灰度交付 | `gray-release-planner` | 已实现 | 与验证结果衔接 |
+| AI 使用记录 | `ai-usage-recorder` | 待新增 | 新增 AI_USAGE 记录技能 |
+
+最终总控链路应调整为：
+
+```text
+subagent 委派规划
+-> 理解：入口和下游契约
+-> 行为刻画：旧行为基线
+-> 扩展：新能力设计和脏数据规则
+-> 重构：小步切片
+-> 验证：回归、契约、下游、性能
+-> 兼容性审查
+-> 灰度交付
+-> AI 使用记录
+```
 
 ### 阶段 0：工作流和技能边界定义
 
@@ -291,6 +323,7 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 
 涉及技能：
 
+- `feature-extension-planner`
 - `refactor-slicer`
 - `compatibility-reviewer`
 
@@ -320,6 +353,7 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 
 涉及技能：
 
+- `regression-validation-planner`
 - `compatibility-reviewer`
 
 验收：
@@ -380,6 +414,10 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 输出：
 
 - AI_USAGE.md。
+
+涉及技能：
+
+- `ai-usage-recorder`
 
 验收：
 
@@ -556,7 +594,131 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 - 所有校验通过。
 - GitHub 仓库包含新增 subagent 策略和技能。
 
-## 7. 审阅关注点
+## 7. 题目六阶段补全计划
+
+### 步骤 A：新增 `feature-extension-planner`
+
+目标：
+
+- 将“扩展”阶段从 `dirty-data-case-designer` 和 `refactor-slicer` 中独立出来。
+- 专门描述如何支持批量处理多只股票、按行业输出、停牌缺失数据处理，同时保持旧输出兼容。
+
+技能应包含：
+
+- 输入：入口地图、消费者契约、旧行为基线、新需求、脏数据规则。
+- 执行步骤：区分旧路径和新路径，设计多股票分组、行业聚合、新输出路径、诊断输出和兼容适配层。
+- 输出格式：扩展设计表、旧行为保持项、新行为新增项、风险和验收标准。
+- subagent 策略：可作为受控委派节点，由 subagent 草拟扩展方案，主代理统一业务规则和兼容边界。
+
+验收：
+
+- 扩展阶段成为显式节点。
+- 能直接回答题目中新需求如何落地，而不只停留在重构层面。
+
+### 步骤 B：新增 `regression-validation-planner`
+
+目标：
+
+- 将“验证”阶段从兼容性审查中独立出来。
+- 专门设计完整测试矩阵和验证策略。
+
+技能应包含：
+
+- 单元测试。
+- 基准文件回归测试。
+- 结构契约测试。
+- 下游报表冒烟测试。
+- 新旧结果差异对比。
+- 脏数据诊断验证。
+- 批量处理性能验证。
+
+subagent 策略：
+
+- 适合强委派给 subagent，因为测试矩阵和验证项容易展开，且可以独立验收。
+
+验收：
+
+- 验证阶段成为显式节点。
+- 能覆盖题目要求的测试矩阵、预期结果、下游兼容性验证。
+
+### 步骤 C：新增 `ai-usage-recorder`
+
+目标：
+
+- 专门对应题目要求中的 AI_USAGE.md。
+- 记录 AI 在理解、重构、测试和审查中的关键上下文、输出和验证方式。
+
+技能应包含：
+
+- 至少 3 条关键提示词模板，建议覆盖理解、行为刻画、扩展设计、验证、审查。
+- 每条提示词的上下文、约束、输出格式和验收条件。
+- AI 输出如何被人工验证。
+- 一次拒绝 AI 大范围重写建议的原因。
+
+subagent 策略：
+
+- 可选委派给 subagent 草拟记录，但最终口径由主代理确认。
+
+验收：
+
+- AI_USAGE.md 不再只是计划中的交付物，而是有独立技能负责生成。
+
+### 步骤 D：更新总控技能链路
+
+目标：
+
+- 将新增三个技能加入 `legacy-data-modernization-workflow` 默认链路。
+- 让总控技能显式覆盖“理解 -> 行为刻画 -> 扩展 -> 重构 -> 验证 -> 灰度交付”。
+
+验收：
+
+- 总控技能中不再把扩展和验证隐含在其他节点里。
+- 每个题目阶段都能映射到至少一个显式技能。
+
+### 步骤 E：更新 subagent 配置
+
+目标：
+
+- 在 `agents/subagents.yaml` 中加入新增技能对应的角色。
+- 明确 `feature-extension-planner` 和 `ai-usage-recorder` 为受控或可选委派，`regression-validation-planner` 为强委派。
+
+验收：
+
+- subagent 角色配置覆盖新增节点。
+- 主代理仍保留最终规则统一和交付口径。
+
+### 步骤 F：更新 README、WORKFLOW、PUBLISHING
+
+目标：
+
+- README 中更新题目要求对应关系。
+- WORKFLOW 中更新节点链路。
+- PUBLISHING 中更新当前版本说明和校验范围。
+
+验收：
+
+- 出题人可以一眼看出六阶段全部显式覆盖。
+- 文档和插件文件结构一致。
+
+### 步骤 G：全量验证、提交、推送
+
+目标：
+
+- 保证新增节点后插件仍然有效。
+
+需要执行：
+
+- 运行所有技能 `quick_validate.py`。
+- 运行插件 `validate_plugin.py`。
+- 扫描术语，确保继续统一使用 `subagent`。
+- 提交本次补全。
+
+验收：
+
+- 所有校验通过。
+- Git 历史中有清晰提交说明。
+
+## 8. 审阅关注点
 
 请重点确认：
 
@@ -567,3 +729,4 @@ subagent 委派策略文档，说明哪些节点适合使用 subagent，哪些�
 - 是否保留 examples 目录作为加分材料。
 - 是否认可新增 `subagent-delegation-planner` 作为 subagent 委派策略节点。
 - 是否希望 subagent 策略单独成文档，还是合并到 WORKFLOW.md。
+- 是否认可新增 `feature-extension-planner`、`regression-validation-planner`、`ai-usage-recorder` 来补齐题目六阶段。

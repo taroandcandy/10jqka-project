@@ -47,51 +47,6 @@ plugins/legacy-data-modernization-workflow/skills/*/agents/openai.yaml
 - `agents/subagents.yaml` 是 subagent 角色配置。
 - `skills/*/agents/openai.yaml` 是每个技能的中文展示和默认调用配置。
 
-## 发布前校验
-
-在仓库根目录执行以下命令。
-
-校验所有技能：
-
-```powershell
-Get-ChildItem -LiteralPath 'plugins\legacy-data-modernization-workflow\skills' -Directory | ForEach-Object {
-  python -X utf8 'C:\Users\Lenovo\.codex\skills\.system\skill-creator\scripts\quick_validate.py' $_.FullName
-}
-```
-
-校验插件整体：
-
-```powershell
-python -X utf8 'C:\Users\Lenovo\.codex\skills\.system\plugin-creator\scripts\validate_plugin.py' 'plugins\legacy-data-modernization-workflow'
-```
-
-说明：
-
-- `-X utf8` 用于确保 Windows 环境能正确读取中文 `SKILL.md`。
-- 校验通过表示技能 frontmatter、目录结构和插件清单满足 Codex 插件基本要求。
-
-## 推送到 GitHub
-
-首次发布到空仓库：
-
-```powershell
-git init
-git add .
-git commit -m "feat: 添加遗留数据脚本治理工作流插件"
-git branch -M main
-git remote add origin git@github.com:taroandcandy/10jqka-project.git
-git push -u origin main
-```
-
-后续版本更新：
-
-```powershell
-git add .
-git commit -m "docs: 优化交付说明"
-git push
-```
-
-如果当前终端没有 GitHub SSH 权限，需要先配置 SSH key，或在已经能访问该仓库的终端里执行推送。
 
 ## 安装为 Codex 插件
 
@@ -121,7 +76,7 @@ legacy-data-modernization-workflow
 
 ## 面向出题人的复现方式
 
-评审不需要真的接入生产股票数据，也不需要准备一个完整旧系统。可以通过以下方式判断方案是否完整：
+评审可以接入生产股票数据并接入完整旧系统。可以通过以下方式判断方案是否完整：
 
 1. 查看 `README.md` 是否解释清楚题目背景和方案主线。
 2. 查看 `WORKFLOW.md` 是否覆盖理解、行为刻画、扩展、重构、验证、灰度和回滚。
@@ -140,4 +95,3 @@ legacy-data-modernization-workflow
 - 每个技能的中文展示配置。
 - 中文 README、WORKFLOW、PLAN 和 PUBLISHING。
 
-这说明答案不只是“我会怎么做”的文字描述，而是一套可以被安装、复用、迭代的 AI 辅助工作流资产。

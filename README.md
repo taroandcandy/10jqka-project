@@ -1,0 +1,45 @@
+# 遗留数据脚本治理工作流插件
+
+本仓库包含一个 Codex 插件，用于辅助改造遗留数据处理脚本。
+
+插件采用“工作流编排层 + 可复用技能节点”的结构。工作流负责协调改造过程，每个技能负责一个聚焦、可审阅、可复用的单点操作。
+
+## 插件位置
+
+插件路径：
+
+```text
+plugins/legacy-data-modernization-workflow
+```
+
+插件市场路径：
+
+```text
+.agents/plugins/marketplace.json
+```
+
+## 技能节点
+
+- `legacy-data-modernization-workflow`：编排完整端到端流程。
+- `repo-entrypoint-mapper`：梳理脚本入口、运行参数、配置、调度任务和调用路径。
+- `consumer-contract-mapper`：识别下游消费者和输出契约。
+- `legacy-behavior-characterizer`：捕获基准输出和特征测试。
+- `dirty-data-case-designer`：设计覆盖缺失交易日、重复行、空字段、多股票输入和行业聚合的最小 CSV 样例。
+- `refactor-slicer`：把功能扩展和重构拆成安全的实现切片。
+- `compatibility-reviewer`：检查结构契约、文件、格式、排序、精度和运行行为的兼容风险。
+- `gray-release-planner`：规划影子运行、双写、灰度、监控和回滚。
+
+## 使用场景
+
+当需要扩展遗留数据脚本，同时不能破坏存量用户或下游报表时，使用完整工作流。
+
+当只需要某个单点能力时，可以单独调用对应技能。例如：只审查一次输出结构契约变更，或只设计一组脏数据测试样例。
+
+## 上传到仓库
+
+当前目录已经按 Codex 插件市场源的形式组织，可以提交并推送到个人 GitHub 仓库。作为可复用插件源发布时，需要保留：
+
+- `.agents/plugins/marketplace.json`
+- `plugins/legacy-data-modernization-workflow`
+
+插件市场条目使用相对插件路径，因此仓库被克隆到本地后，可以作为插件市场源安装。

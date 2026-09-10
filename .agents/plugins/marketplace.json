@@ -1,0 +1,20 @@
+{
+  "name": "personal",
+  "interface": {
+    "displayName": "个人插件市场"
+  },
+  "plugins": [
+    {
+      "name": "legacy-data-modernization-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/legacy-data-modernization-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "legacy-data-modernization-workflow",
+  "version": "0.1.0",
+  "description": "面向遗留数据处理脚本的 AI 辅助现代化工作流插件，在扩展能力时保护下游兼容性。",
+  "author": {
+    "name": "本地开发者"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "遗留数据脚本治理工作流",
+    "shortDescription": "安全改造遗留数据处理脚本。",
+    "longDescription": "一个 Codex 插件，把遗留数据脚本改造拆解为可复用的工作流节点：入口识别、下游契约梳理、旧行为刻画、脏数据样例设计、重构切片、兼容性审查、灰度发布与回滚规划。",
+    "developerName": "本地开发者",
+    "category": "Productivity",
+    "capabilities": [
+      "skills"
+    ],
+    "defaultPrompt": "使用 legacy-data-modernization-workflow 技能，为我的遗留数据处理脚本设计一套安全改造工作流。"
+  }
+}
